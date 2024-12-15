@@ -1,0 +1,144 @@
+* {
+  /* Control of all elements */
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+/* Aquí definimos las Custom properties */
+:root {
+  --negro: #393939;
+  /* Tipografía */
+  --tipo-principal: Helvetica, Arial, sans-serif;
+  --tipo-secundaria: Verdana;
+}
+
+/* Las adaptamos al modo oscuro */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --negro: #ececec;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  background-color: #333e50;
+  height: 90px;
+}
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  color: #f1debd;
+  font-size: 25px;
+}
+
+.nav__menu {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 20px;
+}
+
+.nav__item {
+  display: inline-block;
+}
+
+.nav__link {
+  text-decoration: none;
+  color: #f1debd;
+  font-size: 18px;
+}
+
+.nav__link:hover {
+  color: #fff;
+}
+
+.nav__check {
+  display: none;
+}
+
+.header__btn-menu {
+  display: none;
+}
+
+.header__icon-menu {
+  font-size: 25px;
+}
+
+.header__icon-menu:hover {
+  cursor: pointer;
+}
+
+/* https://paletadecolores.com.mx/paleta/320139/331b3b/333e50/5c6e6e/f1debd/ */
+
+@media screen and (max-width: 900px) {
+  .nav__menu {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    top: 90px;
+    left: -100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 30px;
+    align-items: center;
+    background-color: #331b3b;
+  }
+
+  .nav__link {
+    font-size: 20px;
+  }
+
+  .nav__link:hover {
+    color: #fff;
+  }
+
+  .nav__link--active {
+    color: #fff;
+  }
+
+  .k {
+    color: #fff;
+  }
+
+  .header__btn-menu {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  .header__icon-menu {
+    color: #fff;
+  }
+
+  #checkbtn:checked ~ .nav__menu {
+    left: 0;
+  }
+}
+
+/* Footer */
+.footer {
+  background-color: #333e50;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer__title {
+  color: #fff;
+  font-size: 18px;
+}
+
+.content {
+  height: 80vh;
+  padding: 20px;
+}
