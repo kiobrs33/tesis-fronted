@@ -1,17 +1,22 @@
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useAppDispatch } from "../../redux/hooks/hooks";
-import { signin } from "../../redux/slices/auth/thunks";
+import { signin } from "../../redux/thunks/authThunks";
 
-export const Login = () => {
+interface FormLogin {
+  email: string;
+  password: string;
+}
+
+export const LoginPage = () => {
   const dispatch = useAppDispatch();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormLogin>();
 
-  const handleOnSubmit = (data) => {
+  const handleOnSubmit: SubmitHandler<FormLogin> = (data) => {
     dispatch(signin(data));
   };
 

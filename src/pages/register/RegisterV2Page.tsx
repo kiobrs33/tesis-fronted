@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useAppDispatch } from "../../redux/hooks/hooks";
-import { signup } from "../../redux/slices/auth/thunks";
+import { signup } from "../../redux/thunks/authThunks";
 
 const types = [
   {
@@ -15,7 +15,7 @@ const types = [
   },
 ];
 
-export const Register = () => {
+export const RegisterPage = () => {
   const dispatch = useAppDispatch();
 
   const {

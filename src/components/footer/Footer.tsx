@@ -1,7 +1,7 @@
 export const Footer = () => {
   return (
-    <div className="footer">
-      <h2 className="footer__title">Footer</h2>
-    </div>
+    <footer className="bg-dark text-white text-center py-3">
+      <p>© 2025 Multimedia Store. All rights reserved.</p>
+    </footer>
   );
 };

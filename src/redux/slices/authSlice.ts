@@ -1,7 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-import { signin, signup } from "./thunks";
-import { RootState } from "../../../redux/storeApp";
+import { signin, signup } from "../thunks/authThunks";
 
 interface Auth {
   status?: string;
@@ -92,6 +90,3 @@ export const authSlice = createSlice({
 
 // Actions
 export const { logout } = authSlice.actions;
-
-// Selectors
-export const selectUser = (state: RootState) => state.user;
