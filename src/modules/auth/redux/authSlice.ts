@@ -1,16 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { signin, signup } from "../thunks/authThunks";
+import { loginThunk } from "./authThunks";
 
 interface Auth {
-  status?: string;
+  isOk: boolean;
   isLoading: boolean;
-  message?: string;
+  isAuthenticated: boolean;
+  responseMessage?: string;
   token: string;
   user: {
-    user_id: string;
+    user_id: null | number;
     firstname: string;
     lastname: string;
-    age: number;
+    age: null | number;
     email: string;
     password: string;
     type: string;
@@ -18,15 +19,16 @@ interface Auth {
 }
 
 const defaultState: Auth = {
-  status: "",
+  isOk: false,
   isLoading: false,
-  message: "",
+  isAuthenticated: false,
+  responseMessage: "",
   token: "",
   user: {
-    user_id: "",
+    user_id: null,
     firstname: "",
     lastname: "",
-    age: 0,
+    age: null,
     email: "",
     password: "",
     type: "",
@@ -48,45 +50,28 @@ export const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = defaultState.user;
-      state.message = "";
-      state.status = "";
       state.token = "";
+      state.isAuthenticated = false;
+      state.responseMessage = "";
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(signin.pending, (state) => {
+      .addCase(loginThunk.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(signin.fulfilled, (state, action) => {
+      .addCase(loginThunk.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.status = action.payload.status;
-        state.message = action.payload.message;
+        state.responseMessage = action.payload.message;
         state.token = action.payload.data.token;
         state.user = action.payload.data.user;
+        state.isAuthenticated = true;
       })
-      .addCase(signin.rejected, (state, action) => {
+      .addCase(loginThunk.rejected, (state, action) => {
         state.isLoading = false;
-        state.message = action.error.message;
-      });
-
-    builder
-      .addCase(signup.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(signup.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.status = action.payload.status;
-        state.message = action.payload.message;
-        state.token = action.payload.data.token;
-        state.user = action.payload.data.user;
-      })
-      .addCase(signup.rejected, (state, action) => {
-        state.isLoading = false;
-        state.message = action.error.message;
+        state.responseMessage = action.error.message;
       });
   },
 });
 
-// Actions
 export const { logout } = authSlice.actions;

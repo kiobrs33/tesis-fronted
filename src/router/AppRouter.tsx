@@ -1,43 +1,60 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { Route, Routes } from "react-router";
 import { useAppSelector } from "../redux/hooks/hooks";
 import { MainLayout } from "../layouts/MainLayout";
-import { ProtectedRoute } from "../components/routes/ProtectedRoute";
+import { ProtectedRoute } from "../redux/components/ProtectedRoute";
 import {
   BalancesPage,
   ClientsPage,
   ContentsPage,
   DownloadsPage,
-  HomePage,
-  LoginPage,
+  ErrorPage,
+  LandingPage,
   ProfilePage,
-  RegisterPage,
 } from "../pages";
 import { OrdersPage } from "../pages/orders/OrdersPage";
+import { HomePage } from "../pages/home/HomePage";
+import { LoginPage, RegisterPage } from "../modules/auth";
 
 export const AppRouter = () => {
-  const { token, user } = useAppSelector((state) => state.auth);
-  const { firstname, lastname } = user;
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<HomePage />} />
+    <Routes>
+      <Route element={<MainLayout />}>
+        {/* Rutas publicas */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute
+              redirectTo="/admin/clients"
+              isAllowed={!isAuthenticated}
+            />
+          }
+        >
+          <Route index element={<LandingPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-          <Route
-            path="admin"
-            element={<ProtectedRoute user={{ token, firstname, lastname }} />}
-          >
-            <Route path="clients" element={<ClientsPage />} />
-            <Route path="contents" element={<ContentsPage />} />
-            <Route path="balances" element={<BalancesPage />} />
-            <Route path="downloads" element={<DownloadsPage />} />
-            <Route path="orders" element={<OrdersPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-          </Route>
         </Route>
-      </Routes>
-    </BrowserRouter>
+
+        {/* Rutas privadas */}
+        <Route
+          path="admin"
+          element={
+            <ProtectedRoute redirectTo="/login" isAllowed={isAuthenticated} />
+          }
+        >
+          <Route index element={<HomePage />} />
+          <Route path="clients" element={<ClientsPage />} />
+          <Route path="contents" element={<ContentsPage />} />
+          <Route path="balances" element={<BalancesPage />} />
+          <Route path="downloads" element={<DownloadsPage />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+        </Route>
+      </Route>
+
+      {/* Control para rutas inexistentes 404  not found */}
+      <Route path="*" element={<ErrorPage />} />
+    </Routes>
   );
 };

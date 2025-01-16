@@ -1,7 +1,9 @@
 import { NavLink, useNavigate } from "react-router";
+import { useLogin } from "../../modules/auth";
 
 export const Header = () => {
   const navigate = useNavigate();
+  const { handleLogout, isAuthenticated } = useLogin();
 
   return (
     <nav
@@ -25,98 +27,112 @@ export const Header = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <NavLink
-                to="/login"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                Iniciar sesión
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="/register"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                Registrarse
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="/admin/orders"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                Pedidos
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="/admin/contents"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                Contenidos
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="/admin/clients"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                Clientes
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="/admin/balances"
-                className={({ isActive }) =>
-                  isActive ? "nav-link active" : "nav-link"
-                }
-              >
-                Saldos
-              </NavLink>
-            </li>
-            <li className="nav-item dropdown">
-              <a
-                className="nav-link dropdown-toggle"
-                href="#"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Mi perfil
-              </a>
-              <ul className="dropdown-menu dropdown-menu-lg-end">
-                <li>
-                  <a
-                    className="dropdown-item"
-                    onClick={() => navigate("/admin/profile")}
+            {isAuthenticated ? (
+              <>
+                <li className="nav-item">
+                  <NavLink
+                    to="/admin"
+                    className={({ isActive }) =>
+                      isActive ? "nav-link active" : "nav-link"
+                    }
                   >
-                    Mi cuenta
-                  </a>
+                    Inicio
+                  </NavLink>
                 </li>
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
-                <li>
-                  <a
-                    className="dropdown-item"
-                    onClick={() => console.log("Cerrar sesión")}
+                <li className="nav-item">
+                  <NavLink
+                    to="/admin/orders"
+                    className={({ isActive }) =>
+                      isActive ? "nav-link active" : "nav-link"
+                    }
                   >
-                    Cerrar sesión
-                  </a>
+                    Pedidos
+                  </NavLink>
                 </li>
-              </ul>
-            </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="/admin/contents"
+                    className={({ isActive }) =>
+                      isActive ? "nav-link active" : "nav-link"
+                    }
+                  >
+                    Contenidos
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="/admin/clients"
+                    className={({ isActive }) =>
+                      isActive ? "nav-link active" : "nav-link"
+                    }
+                  >
+                    Clientes
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="/admin/balances"
+                    className={({ isActive }) =>
+                      isActive ? "nav-link active" : "nav-link"
+                    }
+                  >
+                    Saldos
+                  </NavLink>
+                </li>
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Mi perfil
+                  </a>
+                  <ul className="dropdown-menu dropdown-menu-lg-end">
+                    <li>
+                      <a
+                        className="dropdown-item"
+                        onClick={() => navigate("/admin/profile")}
+                      >
+                        Mi cuenta
+                      </a>
+                    </li>
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                      <a className="dropdown-item" onClick={handleLogout}>
+                        Cerrar sesión
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="nav-item">
+                  <NavLink
+                    to="/login"
+                    className={({ isActive }) =>
+                      isActive ? "nav-link active" : "nav-link"
+                    }
+                  >
+                    Iniciar sesión
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="/register"
+                    className={({ isActive }) =>
+                      isActive ? "nav-link active" : "nav-link"
+                    }
+                  >
+                    Registrarse
+                  </NavLink>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>

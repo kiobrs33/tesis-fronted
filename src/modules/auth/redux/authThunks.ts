@@ -14,7 +14,7 @@ interface User {
   type: string;
 }
 
-export const signin = createAsyncThunk(
+export const loginThunk = createAsyncThunk(
   "auth/login",
   async (credentials: Credentials) => {
     const response = await fetch("http://localhost:3200/auth/login", {
@@ -32,7 +32,7 @@ export const signin = createAsyncThunk(
   }
 );
 
-export const signup = createAsyncThunk(
+export const registerThunk = createAsyncThunk(
   "user/register",
   async (newUser: User) => {
     const response = await fetch("http://localhost:3200/user/", {
