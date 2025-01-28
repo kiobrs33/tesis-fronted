@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { authSlice } from "../modules/auth";
+import { clientsSlice } from "../modules/clients/redux/clientsSlice";
 
 const persistedStoreMiddlware =
   (store: { getState: () => unknown }) =>
@@ -12,6 +13,7 @@ const persistedStoreMiddlware =
 export const store = configureStore({
   reducer: {
     auth: authSlice.reducer,
+    clients: clientsSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(persistedStoreMiddlware),

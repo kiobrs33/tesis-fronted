@@ -1,22 +1,22 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-interface Credentials {
+interface ICredentials {
   email: string;
   password: string;
 }
 
-interface User {
+export interface IUser {
   firstname: string;
   lastname: string;
   age: number;
   email: string;
   password: string;
-  type: string;
+  type: "ADMIN" | "CLIENT";
 }
 
 export const loginThunk = createAsyncThunk(
   "auth/login",
-  async (credentials: Credentials) => {
+  async (credentials: ICredentials) => {
     const response = await fetch("http://localhost:3200/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -34,8 +34,8 @@ export const loginThunk = createAsyncThunk(
 
 export const registerThunk = createAsyncThunk(
   "user/register",
-  async (newUser: User) => {
-    const response = await fetch("http://localhost:3200/user/", {
+  async (newUser: IUser) => {
+    const response = await fetch("http://localhost:3200/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newUser),

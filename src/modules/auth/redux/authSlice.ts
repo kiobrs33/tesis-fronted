@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginThunk } from "./authThunks";
+import { loginThunk, registerThunk } from "./authThunks";
 
 interface Auth {
   isOk: boolean;
@@ -56,6 +56,7 @@ export const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // Login
     builder
       .addCase(loginThunk.pending, (state) => {
         state.isLoading = true;
@@ -68,6 +69,23 @@ export const authSlice = createSlice({
         state.isAuthenticated = true;
       })
       .addCase(loginThunk.rejected, (state, action) => {
+        state.isLoading = false;
+        state.responseMessage = action.error.message;
+      });
+
+    // Register
+    builder
+      .addCase(registerThunk.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(registerThunk.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.responseMessage = action.payload.message;
+        state.token = action.payload.data.token;
+        state.user = action.payload.data.user;
+        state.isAuthenticated = true;
+      })
+      .addCase(registerThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.responseMessage = action.error.message;
       });

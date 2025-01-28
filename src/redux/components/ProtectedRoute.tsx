@@ -12,7 +12,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   redirectTo = "/",
   isAllowed = false,
 }) => {
-  // Verifciar si tiene acceso o no
+  // Verifica si tiene acceso o no a la ruta
   if (!isAllowed) {
     return <Navigate to={redirectTo} />;
   }

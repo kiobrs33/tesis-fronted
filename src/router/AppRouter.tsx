@@ -4,7 +4,7 @@ import { MainLayout } from "../layouts/MainLayout";
 import { ProtectedRoute } from "../redux/components/ProtectedRoute";
 import {
   BalancesPage,
-  ClientsPage,
+  // ClientsPage,
   ContentsPage,
   DownloadsPage,
   ErrorPage,
@@ -14,6 +14,7 @@ import {
 import { OrdersPage } from "../pages/orders/OrdersPage";
 import { HomePage } from "../pages/home/HomePage";
 import { LoginPage, RegisterPage } from "../modules/auth";
+import { AdminClients } from "../modules/clients/pages/admin/AdminClients";
 
 export const AppRouter = () => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
@@ -44,7 +45,7 @@ export const AppRouter = () => {
           }
         >
           <Route index element={<HomePage />} />
-          <Route path="clients" element={<ClientsPage />} />
+          <Route path="clients" element={<AdminClients />} />
           <Route path="contents" element={<ContentsPage />} />
           <Route path="balances" element={<BalancesPage />} />
           <Route path="downloads" element={<DownloadsPage />} />
