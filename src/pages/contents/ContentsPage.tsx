@@ -342,8 +342,16 @@ export const ContentsPage = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<Product>();
+
+  const categories = ["Sonido", "Imagen", "Video"];
+  const handleSelectCategory = (category: string) => {
+    setValue("category", category); // Actualiza el valor del formulario con la categoría seleccionada
+  };
+  const selectedCategory = watch("category") || "Selecciona una categoría";
 
   useEffect(() => {
     // Verificamos si ya existen productos en el localStorage
@@ -358,7 +366,7 @@ export const ContentsPage = () => {
           author: "Marca XYZ",
           price: 25.99,
           fileExtension: "N/A",
-          category: "Ropa",
+          category: "Sonido",
           averageRating: 4.5,
           description: "Camiseta de algodón, cómoda y a la moda.",
           image: "https://placehold.co/400",
@@ -369,7 +377,7 @@ export const ContentsPage = () => {
           author: "Marca ABC",
           price: 45.99,
           fileExtension: "N/A",
-          category: "Ropa",
+          category: "Sonido",
           averageRating: 4.2,
           description: "Pantalones de mezclilla de alta calidad.",
           image: "https://placehold.co/400",
@@ -380,7 +388,7 @@ export const ContentsPage = () => {
           author: "Marca LMN",
           price: 59.99,
           fileExtension: "N/A",
-          category: "Calzado",
+          category: "Imagen",
           averageRating: 4.8,
           description: "Zapatos cómodos para correr o hacer ejercicio.",
           image: "https://placehold.co/400",
@@ -391,7 +399,7 @@ export const ContentsPage = () => {
           author: "Marca ZZZ",
           price: 15.99,
           fileExtension: "N/A",
-          category: "Accesorios",
+          category: "Video",
           averageRating: 4.7,
           description: "Sombrero con estilo para ocasiones especiales.",
           image: "https://placehold.co/400",
@@ -643,9 +651,62 @@ export const ContentsPage = () => {
                     )}
                   </div>
 
-                  <div className="mb-3">
+                  {/* <div className="mb-3">
                     <label className="form-label">Categoría</label>
                     <input
+                      {...register("category", {
+                        required: "La categoría es requerida.",
+                        value: selectedProduct?.category || "",
+                      })}
+                      className={`form-control ${
+                        errors.category ? "is-invalid" : ""
+                      }`}
+                    />
+                    {errors.category && (
+                      <div className="invalid-feedback">
+                        {errors.category.message}
+                      </div>
+                    )}
+                  </div> */}
+
+                  <div className="mb-3">
+                    <label htmlFor="category" className="form-label">
+                      Selecciona una categoría
+                    </label>
+                    <div className="dropdown">
+                      <button
+                        className="btn btn-outline-secondary dropdown-toggle"
+                        type="button"
+                        id="dropdownMenuButton"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        {selectedCategory}
+                      </button>
+                      <ul
+                        className="dropdown-menu"
+                        aria-labelledby="dropdownMenuButton"
+                      >
+                        {categories.map((category) => (
+                          <li key={category}>
+                            <a
+                              className="dropdown-item"
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault(); // Evitar el comportamiento por defecto del link
+                                handleSelectCategory(category);
+                              }}
+                            >
+                              {category}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    {/* Este input oculta el valor seleccionado en el dropdown, pero lo mantiene en el formulario */}
+                    {/* <input type="hidden" {...register("category")} /> */}
+                    <input
+                      type="hidden"
                       {...register("category", {
                         required: "La categoría es requerida.",
                         value: selectedProduct?.category || "",
@@ -701,7 +762,7 @@ export const ContentsPage = () => {
                   </div>
 
                   <div className="mb-3">
-                    <label className="form-label">Imagen</label>
+                    <label className="form-label">Archivo</label>
                     <input
                       type="url"
                       {...register("image", {

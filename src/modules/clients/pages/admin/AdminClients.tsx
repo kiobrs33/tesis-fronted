@@ -6,7 +6,6 @@ import {
   updateUserThunk,
 } from "../../redux/clientsThunks";
 import { useForm } from "react-hook-form";
-import { registerThunk } from "../../../auth";
 
 interface IClient {
   user_id: number;

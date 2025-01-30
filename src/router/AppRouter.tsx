@@ -4,7 +4,6 @@ import { MainLayout } from "../layouts/MainLayout";
 import { ProtectedRoute } from "../redux/components/ProtectedRoute";
 import {
   BalancesPage,
-  // ClientsPage,
   ContentsPage,
   DownloadsPage,
   ErrorPage,
@@ -29,7 +28,10 @@ export const AppRouter = () => {
         <Route
           path="/"
           element={
-            <ProtectedRoute redirectTo="/admin/clients" isAllowed={!isAuthenticated} />
+            <ProtectedRoute
+              redirectTo="/admin/clients"
+              isAllowed={!isAuthenticated}
+            />
           }
         >
           <Route index element={<LandingPage />} />
