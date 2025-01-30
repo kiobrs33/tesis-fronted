@@ -1,4 +1,5 @@
 import React from "react";
+import { useAppSelector } from "../../redux/hooks/hooks";
 
 interface User {
   id: number;
@@ -11,14 +12,19 @@ interface User {
 
 export const ProfilePage: React.FC = () => {
   // Simulación de un usuario logueado
-  const loggedInUser: User = {
-    id: 1,
-    name: "Juan Pérez",
-    email: "juan.perez@example.com",
-    phone: "+1 234 567 890",
-    address: "Calle Ficticia 123, Ciudad, País",
-    profilePicture: "https://img.freepik.com/foto-gratis/par-entrenadores_144627-3810.jpg",
-  };
+  // const loggedInUser: User = {
+  //   id: 1,
+  //   name: "Juan Pérez",
+  //   email: "juan.perez@example.com",
+  //   phone: "+1 234 567 890",
+  //   address: "Calle Ficticia 123, Ciudad, País",
+  //   profilePicture:
+  //     "https://img.freepik.com/foto-gratis/par-entrenadores_144627-3810.jpg",
+  // };
+
+  const { user } = useAppSelector((state) => state.auth);
+
+  const loggedInUser = user
 
   return (
     <div className="container py-4">

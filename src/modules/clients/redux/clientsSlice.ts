@@ -1,21 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUsersThunk } from "./clientsThunks";
+import {
+  getUsersThunk,
+  registerUserThunk,
+  updateUserThunk,
+} from "./clientsThunks";
+
+interface IClient {
+  user_id: number;
+  firstname: string;
+  lastname: string;
+  age: number;
+  email: string;
+  password: string;
+  type: string;
+}
 
 interface IClients {
   isOk: boolean;
   isLoading: boolean;
   responseMessage?: string;
-  clients: [
-    {
-      user_id: null | number;
-      firstname: string;
-      lastname: string;
-      age: null | number;
-      email: string;
-      password: string;
-      type: string;
-    }
-  ];
+  clients: IClient[];
   total_items: number;
   pagination: {
     total_items: number;
@@ -29,17 +33,7 @@ const defaultState: IClients = {
   isOk: false,
   isLoading: false,
   responseMessage: "",
-  clients: [
-    {
-      user_id: null,
-      firstname: "",
-      lastname: "",
-      age: null,
-      email: "",
-      password: "",
-      type: "",
-    },
-  ],
+  clients: [],
   total_items: 0,
   pagination: {
     total_items: 0,
@@ -52,18 +46,31 @@ const defaultState: IClients = {
 const initialState: IClients = (() => {
   const persistedState = localStorage.getItem("__redux__state__");
   if (persistedState) {
-    console.log(JSON.parse(persistedState));
-    return JSON.parse(persistedState).auth;
+    // console.log("CLIENTS persistedState", JSON.parse(persistedState));
+    return JSON.parse(persistedState).clients;
   }
   return defaultState;
 })();
 
 export const clientsSlice = createSlice({
-  name: "auth",
+  name: "clients",
   initialState,
   reducers: {
     addClient: (state, action) => {
       state.clients.push(action.payload);
+    },
+    updateClient: (state, action) => {
+      const { id, updatedData } = action.payload;
+      const clientIndex = state.clients.findIndex(
+        (client) => client.user_id === id
+      );
+
+      if (clientIndex !== -1) {
+        state.clients[clientIndex] = {
+          ...state.clients[clientIndex],
+          ...updatedData,
+        };
+      }
     },
   },
   // Llamadas asíncronas apis
@@ -80,6 +87,46 @@ export const clientsSlice = createSlice({
         state.total_items = action.payload.data.total_items;
       })
       .addCase(getUsersThunk.rejected, (state, action) => {
+        state.isLoading = false;
+        state.responseMessage = action.error.message;
+      });
+
+    // createUser
+    builder
+      .addCase(registerUserThunk.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(registerUserThunk.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.responseMessage = action.payload.message;
+        // state.clients = action.payload.data.items;
+        state.clients.push(action.payload.data.user);
+        // state.total_items = action.payload.data.total_items;
+      })
+      .addCase(registerUserThunk.rejected, (state, action) => {
+        state.isLoading = false;
+        state.responseMessage = action.error.message;
+      });
+
+    // updateUser
+    builder
+      .addCase(updateUserThunk.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUserThunk.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.responseMessage = action.payload.message;
+        const clientIndex = state.clients.findIndex(
+          (client) => client.user_id === action.payload.data.user.user_id
+        );
+        if (clientIndex !== -1) {
+          state.clients[clientIndex] = {
+            ...state.clients[clientIndex],
+            ...action.payload.data.user,
+          };
+        }
+      })
+      .addCase(updateUserThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.responseMessage = action.error.message;
       });

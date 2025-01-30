@@ -33,7 +33,7 @@ export const loginThunk = createAsyncThunk(
 );
 
 export const registerThunk = createAsyncThunk(
-  "user/register",
+  "auth/register",
   async (newUser: IUser) => {
     const response = await fetch("http://localhost:3200/auth/register", {
       method: "POST",

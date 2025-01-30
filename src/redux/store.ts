@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { authSlice } from "../modules/auth";
+import { authSlice } from "../modules/auth/redux/authSlice";
 import { clientsSlice } from "../modules/clients/redux/clientsSlice";
 
 const persistedStoreMiddlware =

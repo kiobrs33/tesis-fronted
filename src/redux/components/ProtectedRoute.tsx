@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router";
 
 interface ProtectedRouteProps {
   children?: ReactNode;
-  redirectTo: string;
+  redirectTo?: string;
   isAllowed: boolean;
 }
 

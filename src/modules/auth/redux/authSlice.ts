@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { loginThunk, registerThunk } from "./authThunks";
 
-interface Auth {
+interface IAuth {
   isOk: boolean;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -18,7 +18,7 @@ interface Auth {
   };
 }
 
-const defaultState: Auth = {
+const defaultState: IAuth = {
   isOk: false,
   isLoading: false,
   isAuthenticated: false,
@@ -35,10 +35,10 @@ const defaultState: Auth = {
   },
 };
 
-const initialState: Auth = (() => {
+const initialState: IAuth = (() => {
   const persistedState = localStorage.getItem("__redux__state__");
   if (persistedState) {
-    console.log(JSON.parse(persistedState));
+    // console.log("AUTH persistedState", JSON.parse(persistedState));
     return JSON.parse(persistedState).auth;
   }
   return defaultState;

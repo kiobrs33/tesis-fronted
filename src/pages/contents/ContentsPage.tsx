@@ -1,312 +1,742 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
 
-interface Media {
+// interface Media {
+//   id: number;
+//   title: string;
+//   type: "image" | "video";
+//   url: string;
+// }
+
+// export const ContentsPage: React.FC = () => {
+//   const [mediaItems, setMediaItems] = useState<Media[]>([
+//     {
+//       id: 1,
+//       title: "Imagen 1",
+//       type: "image",
+//       url: "https://img.freepik.com/foto-gratis/par-entrenadores_144627-3810.jpg",
+//     },
+//     {
+//       id: 2,
+//       title: "Video 1",
+//       type: "video",
+//       url: "https://img.freepik.com/foto-gratis/par-entrenadores_144627-3810.jpg",
+//     },
+//     {
+//       id: 3,
+//       title: "Imagen 2",
+//       type: "image",
+//       url: "https://img.freepik.com/foto-gratis/par-entrenadores_144627-3810.jpg",
+//     },
+//   ]);
+
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const itemsPerPage = 5;
+
+//   const [modalType, setModalType] = useState<"create" | "edit" | "view" | null>(
+//     null
+//   );
+//   const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
+
+//   const handleShowModal = (type: "create" | "edit" | "view", media?: Media) => {
+//     setModalType(type);
+//     setSelectedMedia(media || null);
+//     const modal = new window.bootstrap.Modal(
+//       document.getElementById("mediaModal")!
+//     );
+//     modal.show();
+//   };
+
+//   const handleCloseModal = () => {
+//     setModalType(null);
+//     setSelectedMedia(null);
+//   };
+
+//   const handleCreate = (newMedia: Media) => {
+//     setMediaItems([...mediaItems, { ...newMedia, id: mediaItems.length + 1 }]);
+//     handleCloseModal();
+//   };
+
+//   const handleEdit = (updatedMedia: Media) => {
+//     setMediaItems(
+//       mediaItems.map((media) =>
+//         media.id === updatedMedia.id ? updatedMedia : media
+//       )
+//     );
+//     handleCloseModal();
+//   };
+
+//   const handleDelete = (id: number) => {
+//     if (
+//       window.confirm("¿Estás seguro de que deseas eliminar este contenido?")
+//     ) {
+//       setMediaItems(mediaItems.filter((media) => media.id !== id));
+//     }
+//   };
+
+//   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setSearchTerm(e.target.value);
+//     setCurrentPage(1);
+//   };
+
+//   const filteredMedia = mediaItems.filter((media) =>
+//     media.title.toLowerCase().includes(searchTerm.toLowerCase())
+//   );
+
+//   const totalItems = filteredMedia.length;
+//   const totalPages = Math.ceil(totalItems / itemsPerPage);
+//   const startIndex = (currentPage - 1) * itemsPerPage;
+//   const endIndex = startIndex + itemsPerPage;
+//   const paginatedMedia = filteredMedia.slice(startIndex, endIndex);
+
+//   const handlePageChange = (page: number) => {
+//     setCurrentPage(page);
+//   };
+
+//   const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+//     e.preventDefault();
+//     const form = e.currentTarget;
+//     const formData = new FormData(form);
+//     const media: Media = {
+//       id: selectedMedia?.id || 0,
+//       title: formData.get("title") as string,
+//       type: (formData.get("type") as "image" | "video") || "image",
+//       url: formData.get("url") as string,
+//     };
+//     modalType === "create" ? handleCreate(media) : handleEdit(media);
+//     const modal = window.bootstrap.Modal.getInstance(
+//       document.getElementById("mediaModal")!
+//     );
+//     modal?.hide();
+//   };
+
+//   return (
+//     <div className="container py-4">
+//       <h1 className="mb-4">Administración de Contenidos Multimedia</h1>
+
+//       <div className="d-flex justify-content-between align-items-center mb-3">
+//         <input
+//           type="text"
+//           className="form-control w-50"
+//           placeholder="Buscar contenido por título..."
+//           value={searchTerm}
+//           onChange={handleSearch}
+//         />
+//         <button
+//           className="btn btn-primary"
+//           onClick={() => handleShowModal("create")}
+//         >
+//           Crear Contenido
+//         </button>
+//       </div>
+
+//       <table className="table table-striped">
+//         <thead>
+//           <tr>
+//             <th>ID</th>
+//             <th>Título</th>
+//             <th>Tipo</th>
+//             <th>Acciones</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {paginatedMedia.length > 0 ? (
+//             paginatedMedia.map((media) => (
+//               <tr key={media.id}>
+//                 <td>{media.id}</td>
+//                 <td>{media.title}</td>
+//                 <td>{media.type === "image" ? "Imagen" : "Video"}</td>
+//                 <td>
+//                   <button
+//                     className="btn btn-info btn-sm me-2"
+//                     onClick={() => handleShowModal("view", media)}
+//                   >
+//                     Ver
+//                   </button>
+//                   <button
+//                     className="btn btn-warning btn-sm me-2"
+//                     onClick={() => handleShowModal("edit", media)}
+//                   >
+//                     Editar
+//                   </button>
+//                   <button
+//                     className="btn btn-danger btn-sm"
+//                     onClick={() => handleDelete(media.id)}
+//                   >
+//                     Eliminar
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))
+//           ) : (
+//             <tr>
+//               <td colSpan={4} className="text-center">
+//                 No se encontraron contenidos multimedia.
+//               </td>
+//             </tr>
+//           )}
+//         </tbody>
+//       </table>
+
+//       {totalPages > 1 && (
+//         <nav>
+//           <ul className="pagination justify-content-center">
+//             <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+//               <button
+//                 className="page-link"
+//                 onClick={() => handlePageChange(currentPage - 1)}
+//               >
+//                 Anterior
+//               </button>
+//             </li>
+//             {Array.from({ length: totalPages }, (_, index) => (
+//               <li
+//                 key={index}
+//                 className={`page-item ${
+//                   currentPage === index + 1 ? "active" : ""
+//                 }`}
+//               >
+//                 <button
+//                   className="page-link"
+//                   onClick={() => handlePageChange(index + 1)}
+//                 >
+//                   {index + 1}
+//                 </button>
+//               </li>
+//             ))}
+//             <li
+//               className={`page-item ${
+//                 currentPage === totalPages ? "disabled" : ""
+//               }`}
+//             >
+//               <button
+//                 className="page-link"
+//                 onClick={() => handlePageChange(currentPage + 1)}
+//               >
+//                 Siguiente
+//               </button>
+//             </li>
+//           </ul>
+//         </nav>
+//       )}
+
+//       {/* Modal */}
+//       <div className="modal fade" id="mediaModal" tabIndex={-1}>
+//         <div className="modal-dialog">
+//           <div className="modal-content">
+//             <div className="modal-header">
+//               <h5 className="modal-title">
+//                 {modalType === "create" && "Crear Contenido"}
+//                 {modalType === "edit" && "Editar Contenido"}
+//                 {modalType === "view" && "Ver Contenido"}
+//               </h5>
+//               <button
+//                 type="button"
+//                 className="btn-close"
+//                 data-bs-dismiss="modal"
+//                 aria-label="Close"
+//                 onClick={handleCloseModal}
+//               ></button>
+//             </div>
+//             <div className="modal-body">
+//               {modalType === "view" && selectedMedia && (
+//                 <div>
+//                   <p>
+//                     <strong>Título:</strong> {selectedMedia.title}
+//                   </p>
+//                   <p>
+//                     <strong>Tipo:</strong>{" "}
+//                     {selectedMedia.type === "image" ? "Imagen" : "Video"}
+//                   </p>
+//                   <div>
+//                     <strong>Vista previa:</strong>
+//                     {selectedMedia.type === "image" ? (
+//                       <img
+//                         src={selectedMedia.url}
+//                         alt={selectedMedia.title}
+//                         className="img-fluid"
+//                       />
+//                     ) : (
+//                       <video controls className="img-fluid">
+//                         <source src={selectedMedia.url} type="video/mp4" />
+//                         Tu navegador no soporta este formato de video.
+//                       </video>
+//                     )}
+//                   </div>
+//                 </div>
+//               )}
+//               {(modalType === "create" || modalType === "edit") && (
+//                 <form onSubmit={handleSubmitForm}>
+//                   <div className="mb-3">
+//                     <label className="form-label">Título</label>
+//                     <input
+//                       type="text"
+//                       className="form-control"
+//                       name="title"
+//                       defaultValue={selectedMedia?.title || ""}
+//                       required
+//                     />
+//                   </div>
+//                   <div className="mb-3">
+//                     <label className="form-label">Tipo</label>
+//                     <select
+//                       className="form-control"
+//                       name="type"
+//                       defaultValue={selectedMedia?.type || "image"}
+//                     >
+//                       <option value="image">Imagen</option>
+//                       <option value="video">Video</option>
+//                     </select>
+//                   </div>
+//                   <div className="mb-3">
+//                     <label className="form-label">URL</label>
+//                     <input
+//                       type="text"
+//                       className="form-control"
+//                       name="url"
+//                       defaultValue={selectedMedia?.url || ""}
+//                       required
+//                     />
+//                   </div>
+//                   <button type="submit" className="btn btn-primary">
+//                     {modalType === "create" ? "Crear" : "Guardar"}
+//                   </button>
+//                 </form>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+
+interface Product {
   id: number;
-  title: string;
-  type: "image" | "video";
-  url: string;
+  name: string;
+  author: string;
+  price: number;
+  fileExtension: string;
+  category: string;
+  averageRating: number;
+  description: string;
+  image: string;
 }
 
-export const ContentsPage: React.FC = () => {
-  const [mediaItems, setMediaItems] = useState<Media[]>([
-    {
-      id: 1,
-      title: "Imagen 1",
-      type: "image",
-      url: "https://img.freepik.com/foto-gratis/par-entrenadores_144627-3810.jpg",
-    },
-    {
-      id: 2,
-      title: "Video 1",
-      type: "video",
-      url: "https://img.freepik.com/foto-gratis/par-entrenadores_144627-3810.jpg",
-    },
-    {
-      id: 3,
-      title: "Imagen 2",
-      type: "image",
-      url: "https://img.freepik.com/foto-gratis/par-entrenadores_144627-3810.jpg",
-    },
-  ]);
+const itemsPerPage = 8;
 
+export const ContentsPage = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [modalAction, setModalAction] = useState<string>("");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [notification, setNotification] = useState<string | null>(null);
 
-  const [modalType, setModalType] = useState<"create" | "edit" | "view" | null>(
-    null
-  );
-  const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Product>();
 
-  const handleShowModal = (type: "create" | "edit" | "view", media?: Media) => {
-    setModalType(type);
-    setSelectedMedia(media || null);
-    const modal = new window.bootstrap.Modal(
-      document.getElementById("mediaModal")!
-    );
-    modal.show();
-  };
+  useEffect(() => {
+    // Verificamos si ya existen productos en el localStorage
+    const storedProducts = JSON.parse(localStorage.getItem("products") || "[]");
 
-  const handleCloseModal = () => {
-    setModalType(null);
-    setSelectedMedia(null);
-  };
+    // Si no hay productos, los agregamos
+    if (storedProducts.length === 0) {
+      const initialProducts: Product[] = [
+        {
+          id: 1,
+          name: "Camiseta Estilosa",
+          author: "Marca XYZ",
+          price: 25.99,
+          fileExtension: "N/A",
+          category: "Ropa",
+          averageRating: 4.5,
+          description: "Camiseta de algodón, cómoda y a la moda.",
+          image: "https://placehold.co/400",
+        },
+        {
+          id: 2,
+          name: "Pantalones Vaqueros",
+          author: "Marca ABC",
+          price: 45.99,
+          fileExtension: "N/A",
+          category: "Ropa",
+          averageRating: 4.2,
+          description: "Pantalones de mezclilla de alta calidad.",
+          image: "https://placehold.co/400",
+        },
+        {
+          id: 3,
+          name: "Zapatos Deportivos",
+          author: "Marca LMN",
+          price: 59.99,
+          fileExtension: "N/A",
+          category: "Calzado",
+          averageRating: 4.8,
+          description: "Zapatos cómodos para correr o hacer ejercicio.",
+          image: "https://placehold.co/400",
+        },
+        {
+          id: 4,
+          name: "Sombrero Elegante",
+          author: "Marca ZZZ",
+          price: 15.99,
+          fileExtension: "N/A",
+          category: "Accesorios",
+          averageRating: 4.7,
+          description: "Sombrero con estilo para ocasiones especiales.",
+          image: "https://placehold.co/400",
+        },
+      ];
 
-  const handleCreate = (newMedia: Media) => {
-    setMediaItems([...mediaItems, { ...newMedia, id: mediaItems.length + 1 }]);
-    handleCloseModal();
-  };
-
-  const handleEdit = (updatedMedia: Media) => {
-    setMediaItems(
-      mediaItems.map((media) =>
-        media.id === updatedMedia.id ? updatedMedia : media
-      )
-    );
-    handleCloseModal();
-  };
-
-  const handleDelete = (id: number) => {
-    if (
-      window.confirm("¿Estás seguro de que deseas eliminar este contenido?")
-    ) {
-      setMediaItems(mediaItems.filter((media) => media.id !== id));
+      // Guardamos los productos iniciales en localStorage
+      localStorage.setItem("products", JSON.stringify(initialProducts));
+      setProducts(initialProducts);
+      setFilteredProducts(initialProducts);
+    } else {
+      setProducts(storedProducts);
+      setFilteredProducts(storedProducts);
     }
+  }, []);
+
+  const onSubmit = (data: Product) => {
+    let updatedProducts = [...products];
+    if (selectedProduct) {
+      updatedProducts = updatedProducts.map((product) =>
+        product.id === selectedProduct.id ? { ...product, ...data } : product
+      );
+    } else {
+      data.id = products.length + 1;
+      updatedProducts.push(data);
+    }
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
+    setProducts(updatedProducts);
+    setFilteredProducts(updatedProducts);
+    handleModalClose();
+    showNotification("Producto guardado correctamente");
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
+    const term = e.target.value;
+    setSearchTerm(term);
+    setCurrentPage(1); // Reseteamos la paginación al buscar
+
+    if (term) {
+      setFilteredProducts(
+        products.filter((product) =>
+          product.name.toLowerCase().includes(term.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredProducts(products);
+    }
   };
 
-  const filteredMedia = mediaItems.filter((media) =>
-    media.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleModalShow = (action: string, product?: Product) => {
+    setModalAction(action);
+    setSelectedProduct(product || null);
+    setShowModal(true);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    setSelectedProduct(null);
+    reset();
+  };
+
+  const handleDelete = (id: number) => {
+    const updatedProducts = products.filter((product) => product.id !== id);
+    localStorage.setItem("products", JSON.stringify(updatedProducts));
+    setProducts(updatedProducts);
+    setFilteredProducts(updatedProducts);
+    showNotification("Producto eliminado correctamente");
+  };
+
+  const showNotification = (message: string) => {
+    setNotification(message);
+    setTimeout(() => setNotification(null), 1000);
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstItem,
+    indexOfLastItem
   );
 
-  const totalItems = filteredMedia.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedMedia = filteredMedia.slice(startIndex, endIndex);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    const media: Media = {
-      id: selectedMedia?.id || 0,
-      title: formData.get("title") as string,
-      type: (formData.get("type") as "image" | "video") || "image",
-      url: formData.get("url") as string,
-    };
-    modalType === "create" ? handleCreate(media) : handleEdit(media);
-    const modal = window.bootstrap.Modal.getInstance(
-      document.getElementById("mediaModal")!
-    );
-    modal?.hide();
-  };
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div className="container py-4">
-      <h1 className="mb-4">Administración de Contenidos Multimedia</h1>
+    <div className="container mt-5">
+      {notification && (
+        <div className="alert alert-success text-center" role="alert">
+          {notification}
+        </div>
+      )}
 
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <input
-          type="text"
-          className="form-control w-50"
-          placeholder="Buscar contenido por título..."
-          value={searchTerm}
-          onChange={handleSearch}
-        />
-        <button
-          className="btn btn-primary"
-          onClick={() => handleShowModal("create")}
-        >
-          Crear Contenido
-        </button>
+      <h1 className="fs-3 mb-4">Administrar Productos Multimedia</h1>
+      <div className="row mb-4 justify-content-center">
+        <div className="col">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Buscar por nombre"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </div>
+        <div className="col">
+          <button
+            className="btn btn-primary"
+            onClick={() => handleModalShow("Crear")}
+          >
+            Crear Producto
+          </button>
+        </div>
       </div>
 
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Título</th>
-            <th>Tipo</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedMedia.length > 0 ? (
-            paginatedMedia.map((media) => (
-              <tr key={media.id}>
-                <td>{media.id}</td>
-                <td>{media.title}</td>
-                <td>{media.type === "image" ? "Imagen" : "Video"}</td>
+      <div className="table-responsive">
+        <table className="table table-striped table-hover table-bordered align-middle">
+          <thead className="table-primary text-center">
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Autor</th>
+              <th>Precio</th>
+              <th>Categoría</th>
+              <th>Calificación Promedio</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentProducts.map((product) => (
+              <tr key={product.id} className="text-center">
+                <td>{product.id}</td>
+                <td>{product.name}</td>
+                <td>{product.author}</td>
+                <td>${product.price}</td>
+                <td>{product.category}</td>
+                <td>{product.averageRating}</td>
                 <td>
                   <button
-                    className="btn btn-info btn-sm me-2"
-                    onClick={() => handleShowModal("view", media)}
+                    className="btn btn-outline-info btn-sm me-2"
+                    onClick={() => handleModalShow("Ver", product)}
                   >
                     Ver
                   </button>
                   <button
-                    className="btn btn-warning btn-sm me-2"
-                    onClick={() => handleShowModal("edit", media)}
+                    className="btn btn-outline-primary btn-sm me-2"
+                    onClick={() => handleModalShow("Editar", product)}
                   >
                     Editar
                   </button>
                   <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleDelete(media.id)}
+                    className="btn btn-outline-danger btn-sm"
+                    onClick={() => handleDelete(product.id)}
                   >
                     Eliminar
                   </button>
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={4} className="text-center">
-                No se encontraron contenidos multimedia.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-
-      {totalPages > 1 && (
-        <nav>
-          <ul className="pagination justify-content-center">
-            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-              <button
-                className="page-link"
-                onClick={() => handlePageChange(currentPage - 1)}
-              >
-                Anterior
-              </button>
-            </li>
-            {Array.from({ length: totalPages }, (_, index) => (
-              <li
-                key={index}
-                className={`page-item ${
-                  currentPage === index + 1 ? "active" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => handlePageChange(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              </li>
             ))}
+          </tbody>
+        </table>
+      </div>
+
+      <nav>
+        <ul className="pagination justify-content-center">
+          {[...Array(totalPages)].map((_, index) => (
             <li
+              key={index}
               className={`page-item ${
-                currentPage === totalPages ? "disabled" : ""
+                index + 1 === currentPage ? "active" : ""
               }`}
             >
-              <button
-                className="page-link"
-                onClick={() => handlePageChange(currentPage + 1)}
-              >
-                Siguiente
+              <button className="page-link" onClick={() => paginate(index + 1)}>
+                {index + 1}
               </button>
             </li>
-          </ul>
-        </nav>
-      )}
+          ))}
+        </ul>
+      </nav>
 
-      {/* Modal */}
-      <div className="modal fade" id="mediaModal" tabIndex={-1}>
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">
-                {modalType === "create" && "Crear Contenido"}
-                {modalType === "edit" && "Editar Contenido"}
-                {modalType === "view" && "Ver Contenido"}
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                onClick={handleCloseModal}
-              ></button>
-            </div>
-            <div className="modal-body">
-              {modalType === "view" && selectedMedia && (
-                <div>
-                  <p>
-                    <strong>Título:</strong> {selectedMedia.title}
-                  </p>
-                  <p>
-                    <strong>Tipo:</strong>{" "}
-                    {selectedMedia.type === "image" ? "Imagen" : "Video"}
-                  </p>
-                  <div>
-                    <strong>Vista previa:</strong>
-                    {selectedMedia.type === "image" ? (
-                      <img
-                        src={selectedMedia.url}
-                        alt={selectedMedia.title}
-                        className="img-fluid"
-                      />
-                    ) : (
-                      <video controls className="img-fluid">
-                        <source src={selectedMedia.url} type="video/mp4" />
-                        Tu navegador no soporta este formato de video.
-                      </video>
+      {showModal && (
+        <div className="modal show d-block" tabIndex={-1}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">{modalAction} Producto</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={handleModalClose}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="needs-validation"
+                >
+                  <div className="mb-3">
+                    <label className="form-label">Nombre</label>
+                    <input
+                      {...register("name", {
+                        required: "El nombre es requerido.",
+                        value: selectedProduct?.name || "",
+                      })}
+                      className={`form-control ${
+                        errors.name ? "is-invalid" : ""
+                      }`}
+                    />
+                    {errors.name && (
+                      <div className="invalid-feedback">
+                        {errors.name.message}
+                      </div>
                     )}
                   </div>
-                </div>
-              )}
-              {(modalType === "create" || modalType === "edit") && (
-                <form onSubmit={handleSubmitForm}>
+
                   <div className="mb-3">
-                    <label className="form-label">Título</label>
+                    <label className="form-label">Autor</label>
                     <input
-                      type="text"
-                      className="form-control"
-                      name="title"
-                      defaultValue={selectedMedia?.title || ""}
-                      required
+                      {...register("author", {
+                        required: "El autor es requerido.",
+                        value: selectedProduct?.author || "",
+                      })}
+                      className={`form-control ${
+                        errors.author ? "is-invalid" : ""
+                      }`}
                     />
+                    {errors.author && (
+                      <div className="invalid-feedback">
+                        {errors.author.message}
+                      </div>
+                    )}
                   </div>
+
                   <div className="mb-3">
-                    <label className="form-label">Tipo</label>
-                    <select
-                      className="form-control"
-                      name="type"
-                      defaultValue={selectedMedia?.type || "image"}
-                    >
-                      <option value="image">Imagen</option>
-                      <option value="video">Video</option>
-                    </select>
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">URL</label>
+                    <label className="form-label">Precio</label>
                     <input
-                      type="text"
-                      className="form-control"
-                      name="url"
-                      defaultValue={selectedMedia?.url || ""}
-                      required
+                      type="number"
+                      {...register("price", {
+                        required: "El precio es requerido.",
+                        value: selectedProduct?.price || 0,
+                        min: 0,
+                      })}
+                      className={`form-control ${
+                        errors.price ? "is-invalid" : ""
+                      }`}
                     />
+                    {errors.price && (
+                      <div className="invalid-feedback">
+                        {errors.price.message}
+                      </div>
+                    )}
                   </div>
-                  <button type="submit" className="btn btn-primary">
-                    {modalType === "create" ? "Crear" : "Guardar"}
+
+                  <div className="mb-3">
+                    <label className="form-label">Categoría</label>
+                    <input
+                      {...register("category", {
+                        required: "La categoría es requerida.",
+                        value: selectedProduct?.category || "",
+                      })}
+                      className={`form-control ${
+                        errors.category ? "is-invalid" : ""
+                      }`}
+                    />
+                    {errors.category && (
+                      <div className="invalid-feedback">
+                        {errors.category.message}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">Calificación Promedio</label>
+                    <input
+                      type="number"
+                      {...register("averageRating", {
+                        required: "La calificación es requerida.",
+                        value: selectedProduct?.averageRating || 0,
+                        min: 0,
+                        max: 5,
+                      })}
+                      className={`form-control ${
+                        errors.averageRating ? "is-invalid" : ""
+                      }`}
+                    />
+                    {errors.averageRating && (
+                      <div className="invalid-feedback">
+                        {errors.averageRating.message}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">Descripción</label>
+                    <textarea
+                      {...register("description", {
+                        required: "La descripción es requerida.",
+                        value: selectedProduct?.description || "",
+                      })}
+                      className={`form-control ${
+                        errors.description ? "is-invalid" : ""
+                      }`}
+                    ></textarea>
+                    {errors.description && (
+                      <div className="invalid-feedback">
+                        {errors.description.message}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">Imagen</label>
+                    <input
+                      type="url"
+                      {...register("image", {
+                        required: "La imagen es requerida.",
+                        value: selectedProduct?.image || "",
+                      })}
+                      className={`form-control ${
+                        errors.image ? "is-invalid" : ""
+                      }`}
+                    />
+                    {errors.image && (
+                      <div className="invalid-feedback">
+                        {errors.image.message}
+                      </div>
+                    )}
+                  </div>
+
+                  <button type="submit" className="btn btn-success">
+                    Guardar
                   </button>
                 </form>
-              )}
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={handleModalClose}
+                >
+                  Cerrar
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

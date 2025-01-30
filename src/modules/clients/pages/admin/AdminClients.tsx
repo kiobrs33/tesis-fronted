@@ -1,93 +1,81 @@
 import React, { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks/hooks";
-import { getUsersThunk } from "../../redux/clientsThunks";
+import {
+  getUsersThunk,
+  registerUserThunk,
+  updateUserThunk,
+} from "../../redux/clientsThunks";
+import { useForm } from "react-hook-form";
+import { registerThunk } from "../../../auth";
 
-type Cliente = {
-  id: number;
-  nombre: string;
+interface IClient {
+  user_id: number;
+  firstname: string;
+  lastname: string;
+  age: number;
   email: string;
-  telefono: string;
-};
+  password: string;
+  type: string;
+}
 
-export const AdminClients: React.FC = () => {
-  const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([]);
+export const AdminClients = () => {
+  const [clientes, setClientes] = useState<IClient[]>([]);
+  const [filteredClientes, setFilteredClientes] = useState<IClient[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [modalAction, setModalAction] = useState<string>("");
-  const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null);
+  const [selectedCliente, setSelectedCliente] = useState<IClient | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [notification, setNotification] = useState<string | null>(null);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   const dispatch = useAppDispatch();
   const { clients } = useAppSelector((state) => state.clients);
 
-  const fetchClientes = async () => {
-    const mockData: Cliente[] = [
-      {
-        id: 1,
-        nombre: "Juan Perez",
-        email: "juan@example.com",
-        telefono: "123456789",
-      },
-      {
-        id: 2,
-        nombre: "Maria Lopez",
-        email: "maria@example.com",
-        telefono: "987654321",
-      },
-      {
-        id: 3,
-        nombre: "Carlos Gomez",
-        email: "carlos@example.com",
-        telefono: "123123123",
-      },
-      {
-        id: 4,
-        nombre: "Ana Torres",
-        email: "ana@example.com",
-        telefono: "456456456",
-      },
-      {
-        id: 5,
-        nombre: "Luis Diaz",
-        email: "luis@example.com",
-        telefono: "789789789",
-      },
-      {
-        id: 6,
-        nombre: "Sara Ruiz",
-        email: "sara@example.com",
-        telefono: "111222333",
-      },
-    ];
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<IClient>();
 
-    dispatch(getUsersThunk());
-    // setClientes(mockData);
-    setClientes(clients);
-    setFilteredClientes(mockData);
+  const onSubmit = (data: IClient) => {
+    if (selectedCliente) {
+      data = { user_id: selectedCliente.user_id, ...data };
+      dispatch(updateUserThunk(data));
+    }
+
+    dispatch(registerUserThunk(data));
+
+    handleModalClose();
   };
 
   useEffect(() => {
-    fetchClientes();
+    dispatch(getUsersThunk());
   }, []);
+
+  useEffect(() => {
+    setClientes(clients);
+    setFilteredClientes(clients);
+  }, [clients]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
+    setCurrentPage(1); // Reseteamos la paginación al buscar
+
     if (term) {
       setFilteredClientes(
-        clientes.filter((cliente) =>
-          cliente.nombre.toLowerCase().includes(term.toLowerCase())
-        )
+        clientes.filter((cliente) => {
+          return cliente.firstname.toLowerCase().includes(term.toLowerCase());
+        })
       );
     } else {
       setFilteredClientes(clientes);
     }
   };
 
-  const handleModalShow = (action: string, cliente?: Cliente) => {
+  const handleModalShow = (action: string, cliente?: IClient) => {
     setModalAction(action);
     setSelectedCliente(cliente || null);
     setShowModal(true);
@@ -96,19 +84,20 @@ export const AdminClients: React.FC = () => {
   const handleModalClose = () => {
     setShowModal(false);
     setSelectedCliente(null);
+    reset();
   };
 
   const handleDelete = (id: number) => {
-    setClientes(clientes.filter((cliente) => cliente.id !== id));
+    setClientes(clientes.filter((cliente) => cliente.user_id !== id));
     setFilteredClientes(
-      filteredClientes.filter((cliente) => cliente.id !== id)
+      filteredClientes.filter((cliente) => cliente.user_id !== id)
     );
     showNotification("Cliente eliminado correctamente");
   };
 
   const showNotification = (message: string) => {
     setNotification(message);
-    setTimeout(() => setNotification(null), 3000);
+    setTimeout(() => setNotification(null), 1000);
   };
 
   const handleSave = () => {
@@ -124,7 +113,6 @@ export const AdminClients: React.FC = () => {
   );
 
   const totalPages = Math.ceil(filteredClientes.length / itemsPerPage);
-
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
@@ -161,19 +149,23 @@ export const AdminClients: React.FC = () => {
           <thead className="table-primary text-center">
             <tr>
               <th>ID</th>
-              <th>Nombre</th>
-              <th>Email</th>
-              <th>Teléfono</th>
+              <th>Nombres</th>
+              <th>Apellidos</th>
+              <th>Edad</th>
+              <th>Correo</th>
+              <th>Tipo</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {currentClientes.map((cliente) => (
-              <tr key={cliente.id} className="text-center">
-                <td>{cliente.id}</td>
-                <td>{cliente.nombre}</td>
+              <tr key={cliente.user_id} className="text-center">
+                <td>{cliente.user_id}</td>
+                <td>{cliente.firstname}</td>
+                <td>{cliente.lastname}</td>
+                <td>{cliente.age}</td>
                 <td>{cliente.email}</td>
-                <td>{cliente.telefono}</td>
+                <td>{cliente.type}</td>
                 <td>
                   <button
                     className="btn btn-outline-info btn-sm me-2"
@@ -189,7 +181,7 @@ export const AdminClients: React.FC = () => {
                   </button>
                   <button
                     className="btn btn-outline-danger btn-sm"
-                    onClick={() => handleDelete(cliente.id)}
+                    onClick={() => handleDelete(cliente.user_id)}
                   >
                     Eliminar
                   </button>
@@ -221,7 +213,7 @@ export const AdminClients: React.FC = () => {
         <div className="modal show d-block" tabIndex={-1}>
           <div className="modal-dialog">
             <div className="modal-content">
-              <div className="modal-header bg-secondary text-white">
+              <div className="modal-header">
                 <h5 className="modal-title">{modalAction} Cliente</h5>
                 <button
                   type="button"
@@ -233,44 +225,151 @@ export const AdminClients: React.FC = () => {
                 {modalAction === "Ver" ? (
                   <div>
                     <p>
-                      <strong>ID:</strong> {selectedCliente?.id}
+                      <strong>ID:</strong> {selectedCliente?.user_id}
                     </p>
                     <p>
-                      <strong>Nombre:</strong> {selectedCliente?.nombre}
+                      <strong>Nombres:</strong> {selectedCliente?.firstname}
+                    </p>
+                    <p>
+                      <strong>Apellidos:</strong> {selectedCliente?.lastname}
                     </p>
                     <p>
                       <strong>Email:</strong> {selectedCliente?.email}
                     </p>
                     <p>
-                      <strong>Teléfono:</strong> {selectedCliente?.telefono}
+                      <strong>Edad:</strong> {selectedCliente?.age}
                     </p>
                   </div>
                 ) : (
-                  <form>
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="needs-validation"
+                  >
                     <div className="mb-3">
-                      <label className="form-label">Nombre</label>
+                      <label className="form-label">Nombres</label>
                       <input
-                        type="text"
-                        className="form-control"
-                        defaultValue={selectedCliente?.nombre || ""}
+                        {...register("firstname", {
+                          required: "El nombre es requerido.",
+                          value: selectedCliente?.firstname || "",
+                        })}
+                        className={`form-control ${
+                          errors.firstname ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.firstname && (
+                        <div className="invalid-feedback">
+                          {errors.firstname.message}
+                        </div>
+                      )}
                     </div>
+
                     <div className="mb-3">
-                      <label className="form-label">Email</label>
+                      <label className="form-label">Apellidos</label>
+                      <input
+                        {...register("lastname", {
+                          required: "Los apellidos son requeridos.",
+                          value: selectedCliente?.lastname || "",
+                        })}
+                        className={`form-control ${
+                          errors.lastname ? "is-invalid" : ""
+                        }`}
+                      />
+                      {errors.lastname && (
+                        <div className="invalid-feedback">
+                          {errors.lastname.message}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Edad</label>
+                      <input
+                        type="number"
+                        {...register("age", {
+                          required: "La edad es requerida",
+                          value: selectedCliente?.age || 0,
+                          min: {
+                            value: 1,
+                            message: "La edad debe ser mayor a 0.",
+                          },
+                          max: {
+                            value: 120,
+                            message: "La edad debe ser menor o igual a 120.",
+                          },
+                          valueAsNumber: true,
+                        })}
+                        className={`form-control ${
+                          errors.age ? "is-invalid" : ""
+                        }`}
+                      />
+                      {errors.age && (
+                        <div className="invalid-feedback">
+                          {errors.age.message}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Correo Electronico</label>
                       <input
                         type="email"
-                        className="form-control"
-                        defaultValue={selectedCliente?.email || ""}
+                        {...register("email", {
+                          required: "El correo es requerido",
+                          value: selectedCliente?.email || "",
+                        })}
+                        className={`form-control ${
+                          errors.email ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.email && (
+                        <div className="invalid-feedback">
+                          {errors.email.message}
+                        </div>
+                      )}
                     </div>
+
                     <div className="mb-3">
-                      <label className="form-label">Teléfono</label>
+                      <label className="form-label">Contraseña</label>
                       <input
-                        type="text"
-                        className="form-control"
-                        defaultValue={selectedCliente?.telefono || ""}
+                        type="password"
+                        {...register("password", {
+                          required: "Password is required",
+                        })}
+                        className={`form-control ${
+                          errors.password ? "is-invalid" : ""
+                        }`}
                       />
+                      {errors.password && (
+                        <div className="invalid-feedback">
+                          {errors.password.message}
+                        </div>
+                      )}
                     </div>
+
+                    <div className="mb-3">
+                      <label className="form-label">Tipo de usuario</label>
+                      <select
+                        {...register("type", {
+                          required: "User type is required",
+                          value: selectedCliente?.type || "CLIENT",
+                        })}
+                        className="form-select"
+                      >
+                        <option value="CLIENT">CLIENT</option>
+                        <option value="ADMIN">ADMIN</option>
+
+                        {/* <option value="OTHER">Other</option> */}
+                      </select>
+                      {errors.type && (
+                        <div className="invalid-feedback">
+                          {errors.type.message}
+                        </div>
+                      )}
+                    </div>
+
+                    <button type="submit" className="btn btn-success">
+                      Guardar
+                    </button>
                   </form>
                 )}
               </div>
@@ -282,7 +381,7 @@ export const AdminClients: React.FC = () => {
                 >
                   Cerrar
                 </button>
-                {modalAction !== "Ver" && (
+                {/* {modalAction !== "Ver" && (
                   <button
                     type="button"
                     className="btn btn-primary"
@@ -290,7 +389,7 @@ export const AdminClients: React.FC = () => {
                   >
                     Guardar
                   </button>
-                )}
+                )} */}
               </div>
             </div>
           </div>
