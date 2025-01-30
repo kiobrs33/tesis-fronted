@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAppSelector } from "../../../redux/hooks/hooks";
 
+import imgSonido from "../../../assets/images/sonido.png";
+
 interface Product {
   id: number;
   name: string;
@@ -124,7 +126,10 @@ export const DashboardUser = () => {
   };
 
   const handleBuy = () => {
-    const totalAmount = cart.reduce((acc, product) => acc + product.price, 0);
+    const totalAmount = cart.reduce(
+      (acc, product) => acc + Number(product.price),
+      0
+    );
 
     if (totalAmount <= userBalance) {
       alert("¡Compra realizada con éxito!");
@@ -157,7 +162,10 @@ export const DashboardUser = () => {
   };
 
   // Calcular el total del carrito
-  const totalCartAmount = cart.reduce((acc, product) => acc + product.price, 0);
+  const totalCartAmount = cart.reduce(
+    (acc, product) => acc + Number(product.price),
+    0
+  );
 
   return (
     <div className="container py-5">
@@ -226,12 +234,46 @@ export const DashboardUser = () => {
             key={product.id}
           >
             <div className="d-flex align-items-center">
-              <img
-                src={product.image}
-                className="img-fluid rounded-start me-3"
-                style={{ width: "220px", height: "220px", objectFit: "cover" }}
-                alt={product.name}
-              />
+              {product.category == "Imagen" ? (
+                <img
+                  src={product.image}
+                  className="img-fluid rounded me-3"
+                  style={{
+                    width: "220px",
+                    height: "220px",
+                    objectFit: "cover",
+                  }}
+                  alt={product.name}
+                />
+              ) : product.category == "Video" ? (
+                <iframe
+                  className="img-fluid rounded me-3"
+                  style={{
+                    width: "220px",
+                    height: "220px",
+                    objectFit: "cover",
+                  }}
+                  src={product.image}
+                  title="Video de YouTube"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : product.category == "Sonido" ? (
+                <img
+                  src={imgSonido}
+                  className="img-fluid rounded me-3"
+                  style={{
+                    width: "220px",
+                    height: "220px",
+                    objectFit: "cover",
+                  }}
+                  alt={product.name}
+                />
+              ) : (
+                <></>
+              )}
+
               <div>
                 <h5>{product.name}</h5>
                 <p>
